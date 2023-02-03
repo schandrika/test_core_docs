@@ -1,0 +1,4 @@
+[submodule "test-agent-doc"]
+	path = submodules/test-agent-doc
+	url = https://github.com/schandrika/test_agent_doc.git
+	branch = v1
