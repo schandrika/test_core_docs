@@ -1,0 +1,5 @@
+============
+installation
+============
+
+installation of core
