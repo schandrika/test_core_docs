@@ -12,7 +12,7 @@ Welcome to test-core-docs's documentation!
    
    installation
    deployment
-
+   test-agent-docs/index
 
 Indices and tables
 ==================
