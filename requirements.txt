@@ -27,3 +27,4 @@ zmq
 ply
 psutil
 ws4py
+pyyaml
