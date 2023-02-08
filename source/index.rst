@@ -154,7 +154,7 @@ at our bi-weekly office-hours and on Slack. To be invited to office-hours or sla
    :caption: CORE AGENTS
    :hidden:
    :titlesonly:
-   :maxdepth: 1
+   :maxdepth: 2
    test-agent-docs/index
 
 Indices and tables
