@@ -218,7 +218,7 @@ def setup(app):
     by readthedocs
     :param app:
     """
-    app.connect('builder-inited', generate_apidoc)
+    #app.connect('builder-inited', generate_apidoc)
     # For now clean before building so that we can use the rst generated for debugging issues
     # app.connect('build-finished', clean_api_rst)
 
