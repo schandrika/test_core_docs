@@ -17,7 +17,7 @@ help:
 docs/test-agent-docs:
 	git submodule init; \
 	git submodule update; \
-	ln -s ../submodules/test_agent_docs/docs/source ./source/test-agent-docs
+	ln -f -s ../submodules/test_agent_docs/docs/source ./source/test-agent-docs
 	@echo
 	@echo "Documentation of test-agent-docs initialized."
 
