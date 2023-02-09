@@ -68,94 +68,16 @@ at our bi-weekly office-hours and on Slack. To be invited to office-hours or sla
    platform-features/security/volttron-security
    platform-features/web-api/introduction
 
+
 .. toctree::
-   :caption: Agent Framework
+   :caption: Agent docs
    :hidden:
    :titlesonly:
    :maxdepth: 1
 
-   agent-framework/agents-overview
-   agent-framework/core-service-agents/index
-   agent-framework/operations-agents/index
-   agent-framework/driver-framework/drivers-overview
-   agent-framework/historian-agents/historian-framework
-   agent-framework/web-framework
-   agent-framework/integrating-simulations/index
-   agent-framework/platform-service-standardization
-   agent-framework/third-party-agents
+   TestAgent<test-agent-docs/index>
 
-.. toctree::
-   :caption: Developing in VOLTTRON
-   :hidden:
-   :titlesonly:
-   :maxdepth: 1
 
-   developing-volttron/community
-   developing-volttron/development-environment/index
-   developing-volttron/developing-agents/agent-development
-   developing-volttron/developing-drivers/driver-development
-   developing-volttron/contributing-code
-   developing-volttron/contributing-documentation
-   developing-volttron/jupyter/jupyter-notebooks
-   developing-volttron/python-for-matlab-users
-
-.. toctree::
-   :caption: Deploying VOLTTRON
-   :hidden:
-   :titlesonly:
-   :maxdepth: 1
-
-   deploying-volttron/bootstrap-process
-   deploying-volttron/platform-configuration
-   deploying-volttron/deployment-planning-options
-   deploying-volttron/single-machine
-   deploying-volttron/multi-platform/index
-   deploying-volttron/secure-deployment-considerations
-   deploying-volttron/linux-system-hardening
-   deploying-volttron/recipe-deployment
-
-.. toctree::
-   :caption: VOLTTRON Core Service Agents
-   :hidden:
-   :titlesonly:
-   :maxdepth: 2
-   :glob:
-
-   volttron-api/services/*/modules
-
-.. toctree::
-   :caption: VOLTTRON Core Operations Agents
-   :hidden:
-   :titlesonly:
-   :maxdepth: 2
-   :glob:
-
-   volttron-api/ops/*/modules
-
-.. toctree::
-   :caption: VOLTTRON Topics
-   :hidden:
-   :titlesonly:
-   :maxdepth: 1
-
-   Releases <volttron-topics/VOLTTRON-releases/index>
-   volttron-topics/troubleshooting/index
-   volttron-topics/volttron-applications/index
-   
-.. toctree::
-   :caption: Tutorials
-   :hidden:
-   :titlesonly:
-   :maxdepth: 1
-
-   tutorials/quick-start
-
-.. toctree::
-   :caption: CORE AGENTS
-   :hidden:
-   :titlesonly:
-   :maxdepth: 2
-   test-agent-docs/index
 
 Indices and tables
 ==================
