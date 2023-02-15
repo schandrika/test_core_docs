@@ -75,7 +75,7 @@ at our bi-weekly office-hours and on Slack. To be invited to office-hours or sla
    :titlesonly:
    :maxdepth: 1
 
-   TestAgent<test-agent-docs/index>
+   TestAgentHeader <agent-docs/test_agent_docs/docs/source/index>
 
 
 

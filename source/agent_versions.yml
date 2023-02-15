@@ -1,0 +1,11 @@
+#name of agent repo.
+test_agent_docs:
+    # optional path to repo.
+    # if not provided default would be "https://github.com/eclipse-volttron/" + agent name(parent element)
+    repo: https://schandrika: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@github.com/schandrika/test_agent_docs
+    # version that should get pulled. should be valid value to be used wtih git checkout. ex. branch, tag
+    version: main
+    # optional docs directory. defaults to "docs/source" under root
+    docs_dir: docs/source
+
+
