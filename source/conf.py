@@ -16,12 +16,10 @@
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
 
-import subprocess
-import sys
 import os
-from glob import glob
+import subprocess
+
 from mock import Mock as MagicMock
-import yaml
 
 
 class Mock(MagicMock):
@@ -118,9 +116,7 @@ html_theme = 'sphinx_rtd_theme'
 # further.  For a list of options available for each theme, see the
 # documentation.
 #
-html_theme_options = {
-    'style_nav_header_background': '#0c5404',
-}
+html_theme_options = {}
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
@@ -222,58 +218,54 @@ def setup(app):
     :param app:
     """
     # app.connect('builder-inited', generate_apidoc)
-    app.connect('builder-inited', generate_agent_docs)
+    app.connect('builder-inited', generate_volttron_docs)
 
     # app.connect('build-finished', clean_api_rst)
-    app.connect('build-finished', clean_agent_docs_rst)
+    app.connect('build-finished', clean_volttron_docs_rst)
 
 
 script_dir = os.path.dirname(os.path.realpath(__file__))
-agent_docs_root = os.path.join(script_dir, "agent-docs")
-
-def _read_config(filename):
-    data = {}
-    try:
-        with open(filename, 'r') as yaml_file:
-            data = yaml.safe_load(yaml_file)
-    except IOError as exc:
-        print("Error reading from file: {}".format(filename))
-        raise exc
-    except yaml.YAMLError as exc:
-        print("Yaml Error: {}".format(filename))
-        raise exc
-    return data
+vdocs_root = os.path.join(script_dir, "volttron")
+vdocs_source_abs_path = os.path.join(vdocs_root, "docs/source")
 
 
-def generate_agent_docs(app):
-    os.makedirs(agent_docs_root)
-    agents_data = _read_config(filename=os.path.join(script_dir, "agent_versions.yml"))
-    repo_prefix = "https://github.com/eclipse-volttron/"
-    for agent_name in agents_data:
-        agent_repo = agents_data[agent_name].get("repo")
-        if not agent_repo:
-            agent_repo = repo_prefix + agent_name
-        subprocess.check_call(["git", "clone", "--no-checkout", agent_repo], cwd=agent_docs_root)
-        # for 1st version not doing api-docs. If doing api-docs do full checkout, install requirements, run api-docs
-        agent_clone_dir = os.path.join(agent_docs_root, agent_name)
-        docs_source_dir = agents_data[agent_name].get("docs_dir", "docs/source")
-        subprocess.check_call(["git", "sparse-checkout", "set", docs_source_dir], cwd=agent_clone_dir)
-        agent_version = agents_data[agent_name]["version"]
-        subprocess.check_call(["git", "checkout", agent_version], cwd=agent_clone_dir)
+def generate_volttron_docs(app):
+    import shutil
+    global script_dir, vdocs_root, vdocs_source_subdir, vdocs_source_abs_path
+    volttron_version = "releases/8.2"
+    volttron_repo = "https://github.com/volttron/volttron"
+
+    subprocess.check_call(["git", "clone", "--no-checkout", volttron_repo], cwd=script_dir)
+    subprocess.check_call(["git", "sparse-checkout", "set", "--no-cone", "docs/source/*", "docs/requirements.txt",
+                           '!conf.py', '!api_doc_config.yml', '!apidocs-templates'], cwd=vdocs_root)
+    subprocess.check_call(["git", "checkout", volttron_version], cwd=vdocs_root)
+    subprocess.check_call(["pip", "install", "-r", "docs/requirements.txt"], cwd=vdocs_root)
+    # mv everything from volttron/docs/source directory into this repo's source directory(i.e. dir of this conf.py)
+    shutil.copytree(vdocs_source_abs_path, script_dir, dirs_exist_ok=True)
 
 
-def clean_agent_docs_rst(app, exception):
+def clean_volttron_docs_rst(app, exception):
     """
     Deletes folder containing all auto generated .rst files at the end of
     sphinx build immaterial of the exit state of sphinx build.
     :param app:
     :param exception:
     """
-    global agent_docs_root
+    global vdocs_root, vdocs_source_abs_path, script_dir
     import shutil
-    if os.path.exists(agent_docs_root):
-        print("Cleanup: Removing agent docs clone directory {}".format(agent_docs_root))
-        shutil.rmtree(agent_docs_root)
+    copied_files = os.listdir(vdocs_source_abs_path)
+    for f in copied_files:
+        print(f"Cleanup: Removing file copied into {script_dir}")
+        # remove everything that was copied from volttron docs/source to this scripts parent's dir
+        file_path = os.path.join(script_dir, f)
+        if os.path.isdir(file_path):
+            shutil.rmtree(file_path)
+        else:
+            os.remove(file_path)
+
+    if os.path.exists(vdocs_root):
+        print("Cleanup: Removing volttron docs clone directory {}".format(vdocs_root))
+        shutil.rmtree(vdocs_root)
 
 # apidocs_base_dir = os.path.abspath(script_dir + "/volttron-api")
 # volttron_root = os.path.abspath(os.path.join(script_dir, "../.."))
