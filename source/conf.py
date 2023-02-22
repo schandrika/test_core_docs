@@ -227,11 +227,12 @@ def setup(app):
 script_dir = os.path.dirname(os.path.realpath(__file__))
 vdocs_root = os.path.join(script_dir, "volttron")
 vdocs_source_abs_path = os.path.join(vdocs_root, "docs/source")
+vapi_root = os.path.join(script_dir, "volttron-api")
 
 
 def generate_volttron_docs(app):
     import shutil
-    global script_dir, vdocs_root, vdocs_source_subdir, vdocs_source_abs_path
+    global script_dir, vdocs_root, vdocs_source_subdir, vdocs_source_abs_path, vapi_root
     volttron_version = "releases/8.2"
     volttron_repo = "https://github.com/volttron/volttron"
 
@@ -243,6 +244,35 @@ def generate_volttron_docs(app):
     # mv everything from volttron/docs/source directory into this repo's source directory(i.e. dir of this conf.py)
     shutil.copytree(vdocs_source_abs_path, script_dir, dirs_exist_ok=True)
 
+    # Grab readme files for core agents
+    os.mkdir(vapi_root)
+    subprocess.check_call(["git", "clone", "--no-checkout", volttron_repo, "volttron-api"], cwd=script_dir)
+    subprocess.check_call(["git", "sparse-checkout", "set", "--no-cone",
+                           "services/core/**/README.md",
+                           "services/ops/**/README.md"], cwd=vapi_root)
+    subprocess.check_call(["git", "checkout", volttron_version], cwd=vapi_root)
+
+    # Remove unwanted agents
+    core_dir = os.path.join(vapi_root, "services/core")
+    shutil.rmtree(os.path.join(core_dir, "DNP3Agent"), ignore_errors=True)
+    shutil.rmtree(os.path.join(core_dir, "MarketServiceAgent"), ignore_errors=True)
+    shutil.rmtree(os.path.join(core_dir, "OpenEISHistorian"), ignore_errors=True)
+    shutil.rmtree(os.path.join(core_dir, "ObixHistoryPublish"), ignore_errors=True)
+    shutil.rmtree(os.path.join(core_dir, "IEEE2030_5Agent"), ignore_errors=True)
+
+    # update index.rst to point to README.md instead of generated api-docs
+    index_rst = os.path.join(script_dir, 'index.rst')
+    with open(index_rst, 'r') as file:
+        filedata = file.read()
+
+    # Replace the target string
+    filedata = filedata.replace('volttron-api/ops/*/modules', 'volttron-api/services/ops/**/README')
+    filedata = filedata.replace('volttron-api/services/*/modules', 'volttron-api/services/**/README')
+
+    # Write the file out again
+    with open(index_rst, 'w') as file:
+        file.write(filedata)
+
 
 def clean_volttron_docs_rst(app, exception):
     """
@@ -251,7 +281,7 @@ def clean_volttron_docs_rst(app, exception):
     :param app:
     :param exception:
     """
-    global vdocs_root, vdocs_source_abs_path, script_dir
+    global vdocs_root, vdocs_source_abs_path, script_dir, vapi_root
     import shutil
     copied_files = os.listdir(vdocs_source_abs_path)
     for f in copied_files:
@@ -266,6 +296,10 @@ def clean_volttron_docs_rst(app, exception):
     if os.path.exists(vdocs_root):
         print("Cleanup: Removing volttron docs clone directory {}".format(vdocs_root))
         shutil.rmtree(vdocs_root)
+
+    if os.path.exists(vapi_root):
+        print("Cleanup: Removing volttron api clone directory {}".format(vdocs_root))
+        shutil.rmtree(vapi_root)
 
 # apidocs_base_dir = os.path.abspath(script_dir + "/volttron-api")
 # volttron_root = os.path.abspath(os.path.join(script_dir, "../.."))

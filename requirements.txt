@@ -28,3 +28,4 @@ ply
 psutil
 ws4py
 pyyaml
+Jinja2<3.2
