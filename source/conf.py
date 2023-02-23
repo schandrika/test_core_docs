@@ -298,7 +298,7 @@ def clean_volttron_docs_rst(app, exception):
         shutil.rmtree(vdocs_root)
 
     if os.path.exists(vapi_root):
-        print("Cleanup: Removing volttron api clone directory {}".format(vdocs_root))
+        print("Cleanup: Removing volttron api clone directory {}".format(vapi_root))
         shutil.rmtree(vapi_root)
 
 # apidocs_base_dir = os.path.abspath(script_dir + "/volttron-api")
