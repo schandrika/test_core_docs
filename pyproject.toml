@@ -8,10 +8,7 @@ packages = [{include = "test_core_docs"}]
 
 [tool.poetry.dependencies]
 python = "^3.8"
-Sphinx = ">=1.6,<6"
-sphinx-rtd-theme = "^1.1.1"
-sphinx-autobuild = "^2021.3.14"
-pyyaml = "^6.0"
+Sphinx = "^6.0.0"
 
 
 [build-system]

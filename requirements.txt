@@ -1,6 +1,5 @@
 sphinx_rtd_theme
 sphinx-autobuild
-sphinx==5.3.0
 m2r2
 bacpypes
 enum34
@@ -28,4 +27,3 @@ ply
 psutil
 ws4py
 pyyaml
-Jinja2<3.2

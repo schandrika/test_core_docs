@@ -225,35 +225,34 @@ def setup(app):
 
 
 script_dir = os.path.dirname(os.path.realpath(__file__))
-vdocs_root = os.path.join(script_dir, "volttron")
+vdocs_root = os.path.join(script_dir, "volttron-docs")
 vdocs_source_abs_path = os.path.join(vdocs_root, "docs/source")
-vapi_root = os.path.join(script_dir, "volttron-api")
+vagent_readme = os.path.join(script_dir, "volttron-api")
 
 
 def generate_volttron_docs(app):
     import shutil
-    global script_dir, vdocs_root, vdocs_source_subdir, vdocs_source_abs_path, vapi_root
+    global script_dir, vdocs_root, vdocs_source_subdir, vdocs_source_abs_path, vagent_readme
     volttron_version = "releases/8.2"
     volttron_repo = "https://github.com/volttron/volttron"
 
-    subprocess.check_call(["git", "clone", "--no-checkout", volttron_repo], cwd=script_dir)
+    subprocess.check_call(["git", "clone", "--no-checkout", volttron_repo, vdocs_root], cwd=script_dir)
     subprocess.check_call(["git", "sparse-checkout", "set", "--no-cone", "docs/source/*", "docs/requirements.txt",
                            '!conf.py', '!api_doc_config.yml', '!apidocs-templates'], cwd=vdocs_root)
     subprocess.check_call(["git", "checkout", volttron_version], cwd=vdocs_root)
-    subprocess.check_call(["pip", "install", "-r", "docs/requirements.txt"], cwd=vdocs_root)
     # mv everything from volttron/docs/source directory into this repo's source directory(i.e. dir of this conf.py)
     shutil.copytree(vdocs_source_abs_path, script_dir, dirs_exist_ok=True)
 
     # Grab readme files for core agents
-    os.mkdir(vapi_root)
+    os.mkdir(vagent_readme)
     subprocess.check_call(["git", "clone", "--no-checkout", volttron_repo, "volttron-api"], cwd=script_dir)
     subprocess.check_call(["git", "sparse-checkout", "set", "--no-cone",
                            "services/core/**/README.md",
-                           "services/ops/**/README.md"], cwd=vapi_root)
-    subprocess.check_call(["git", "checkout", volttron_version], cwd=vapi_root)
+                           "services/ops/**/README.md"], cwd=vagent_readme)
+    subprocess.check_call(["git", "checkout", volttron_version], cwd=vagent_readme)
 
     # Remove unwanted agents
-    core_dir = os.path.join(vapi_root, "services/core")
+    core_dir = os.path.join(vagent_readme, "services/core")
     shutil.rmtree(os.path.join(core_dir, "DNP3Agent"), ignore_errors=True)
     shutil.rmtree(os.path.join(core_dir, "MarketServiceAgent"), ignore_errors=True)
     shutil.rmtree(os.path.join(core_dir, "OpenEISHistorian"), ignore_errors=True)
@@ -281,11 +280,11 @@ def clean_volttron_docs_rst(app, exception):
     :param app:
     :param exception:
     """
-    global vdocs_root, vdocs_source_abs_path, script_dir, vapi_root
+    global vdocs_root, vdocs_source_abs_path, script_dir, vagent_readme
     import shutil
     copied_files = os.listdir(vdocs_source_abs_path)
     for f in copied_files:
-        print(f"Cleanup: Removing file copied into {script_dir}")
+        print(f"Cleanup: Removing file copied into {script_dir} {f}")
         # remove everything that was copied from volttron docs/source to this scripts parent's dir
         file_path = os.path.join(script_dir, f)
         if os.path.isdir(file_path):
@@ -297,9 +296,9 @@ def clean_volttron_docs_rst(app, exception):
         print("Cleanup: Removing volttron docs clone directory {}".format(vdocs_root))
         shutil.rmtree(vdocs_root)
 
-    if os.path.exists(vapi_root):
-        print("Cleanup: Removing volttron api clone directory {}".format(vapi_root))
-        shutil.rmtree(vapi_root)
+    if os.path.exists(vagent_readme):
+        print("Cleanup: Removing volttron api clone directory {}".format(vagent_readme))
+        shutil.rmtree(vagent_readme)
 
 # apidocs_base_dir = os.path.abspath(script_dir + "/volttron-api")
 # volttron_root = os.path.abspath(os.path.join(script_dir, "../.."))
